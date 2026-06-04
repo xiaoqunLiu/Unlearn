@@ -32,9 +32,9 @@ def load_vllm_model(args):
     elif args.model == "Qwen2.5-7b-rmu":
         model_name = "./qwen7b-rmu-model"
     elif args.model == "Qwen2.5-14b-npo":
-        model_name = "./qwen7b-npo-model"
+        model_name = "./qwen14b-npo-model"
     elif args.model == "Qwen2.5-14b-rmu":
-        model_name = "./qwen7b-rmu-model"
+        model_name = "./qwen14b-rmu-model"
     else:
         model_name_to_hf_name = {
             "Zephyr-7b": "HuggingFaceH4/zephyr-7b-beta",
@@ -193,12 +193,11 @@ if __name__ == "__main__":
                         choices=["UltraChat", "Cosmopedia", "MMLU", "LmsysChat", "WildChat", "FineWeb"], 
                         help="the dataset to generate responses from")
     parser.add_argument("--model", type=str, default=None, 
-                        choices=["Llama3.1-8b", "Llama3.1-8b-rmu", "Llama3.1-8b-npo"
-                                 "Qwen2.5-7b", "Qwen2.5-7b-rmu", "Qwen2.5-7b-npo", 
-                                 "Zephyr-7b", "Zephyr-7b-rmu", "Zephyr-7b-npo", 
-                                 "Yi-34B-Chat", "Yi-34B-Chat-rmu", "Yi-34B-Chat-npo", 
-                                 "Qwen2.5-7b", "Qwen2.5-7b-rmu", "Qwen2.5-7b-npo", 
-                                 "Qwen2.5-14b", "Qwen2.5-14b-rmu", "Qwen2.5-14b-npo"], 
+                        choices=["Llama3.1-8b", "Llama3.1-8b-rmu", "Llama3.1-8b-npo",
+                                 "Zephyr-7b", "Zephyr-7b-rmu", "Zephyr-7b-npo",
+                                 "Yi-34B-Chat", "Yi-34B-Chat-rmu", "Yi-34B-Chat-npo",
+                                 "Qwen2.5-7b", "Qwen2.5-7b-rmu", "Qwen2.5-7b-npo",
+                                 "Qwen2.5-14b", "Qwen2.5-14b-rmu", "Qwen2.5-14b-npo"],
                         help="the model to generate responses from")
     parser.add_argument("--num_samples", type=int, default=11_000, help="the number of samples to generate")
     parser.add_argument("--output_path", type=str, default=None, help="the path to save the output")

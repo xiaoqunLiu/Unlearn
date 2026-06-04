@@ -296,7 +296,7 @@ if __name__ == "__main__":
     # training hyperparameters
     parser.add_argument("--epochs", type=int, default=3, help="the number of epochs")
     parser.add_argument("--batch_size", type=int, default=8, help="the batch size")
-    parser.add_argument('--lr', default=9e-5, type=float, help="the learning rate")
+    parser.add_argument('--lr', default=8e-5, type=float, help="the learning rate")
     parser.add_argument("--gradient_clipping", type=float, default=0.3, help="the gradient clipping")
     parser.add_argument("--weight_decay", type=float, default=0.001, help="the weight decay")
     parser.add_argument("--warmup_ratio", type=float, default=0.1, help="the number of warmup steps")

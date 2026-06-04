@@ -33,6 +33,31 @@ This is the official code repository for the ICLR 2026 paper [Unlearning Isn't I
 - 🔥 Check out our related ICLR 2026 paper: **[Safety Mirage](https://arxiv.org/abs/2503.11832)**, which proposes machine unlearning as a more robust alignment alternative for VLM safety fine-tuning.
 
 
+## Repository Structure
+
+The repository is organized by pipeline stage:
+
+```
+Unlearn/
+├── unlearning/        # Stage 1 — produce unlearned models
+│   ├── rmu/           #   RMU (python -m unlearning.rmu.unlearn)
+│   └── npo/           #   NPO (python -m unlearning.npo.unlearn)
+├── generation/        # Stage 2 — collect model outputs
+│   ├── generate_response.py          # text responses (vLLM)
+│   ├── generate_wmdp_response.py     # WMDP forget-set responses
+│   ├── generate_response_general.py  # alternative response generator
+│   └── generate_activations.py       # pre-logit (model.norm) activations
+├── detection/         # Stage 3 — train unlearning-trace detectors
+│   ├── classify_responses.py         # text-output classifier
+│   └── classify_activations.py       # activation MLP probe
+├── data_process/      # dataset split / mix / WMDP combine helpers
+├── data/              # WMDP corpora + MCQs (see Data.md)
+└── docs/              # documentation
+```
+
+Pipeline: **unlearning → generation → detection**. Run all commands from the
+repository root.
+
 ## Data Preperation
 
 Please see [Data.md](./docs/Data.md).

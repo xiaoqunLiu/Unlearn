@@ -1,13 +1,13 @@
 ## Response Generation
 
-Customize the `model_name` in both `generate_response.py` and `generate_wmdp_response.py` to point to your unlearned model's location. Ensure you have downloaded the WMDP multiple-choice question JSON files as described in [Data.md](./Data.md).
+Customize the `model_name` in both `generation/generate_response.py` and `generation/generate_wmdp_response.py` to point to your unlearned model's location. Ensure you have downloaded the WMDP multiple-choice question JSON files as described in [Data.md](./Data.md).
 
 ### Forget response generation
 
 Generate responses for **forget-relevant** WMDP questions:
 
 ```
-python generate_wmdp_responses.py \
+python generation/generate_wmdp_response.py \
     --model Yi-34B-Chat --temperature 0 \
     --dataset_path ./data/wmdp-mcqs/cyber_questions.json \
     --output_path ./responses/wmdp-cyber/Yi-34B-Chat.json \
@@ -39,7 +39,7 @@ python data_process/wmdp_combine.py
 Generate responses for **forget-irrelevant** benchmarks (e.g., MMLU or UltraChat):
 
 ```
-python generate_responses.py \
+python generation/generate_response.py \
     --model Yi-34B-Chat --temperature 0 \
     --dataset MMLU --num_samples 11_000 \
     --output_path ./responses/MMLU/Yi-34B-Chat.json \
@@ -64,6 +64,23 @@ python data_process/split.py
 - `eval_dir`: Output directory for evaluation split  
 - `TOTAL_TRAIN`: Number of training samples
 - `TOTAL_EVAL`: Number of evaluation samples
+
+### Activation Extraction (for activation-based detection)
+
+In addition to detecting unlearning traces from text outputs, the paper also studies traces in the model's **pre-logit activations**. Following the paper (Sec. 4 / Appendix B), `generation/generate_activations.py` greedy-decodes a **100-token** response and records the hidden state of the final `model.norm` layer (the pre-logit activation, after the last RMSNorm) for **each newly generated token**, hooking the layer once per decode step. Concatenating the per-token vectors across the 100-token response yields the activation representation for that prompt — dimension `100 × hidden_size` (e.g. `409,600` for Zephyr-7B). The paper extracts these for `3,000` sampled prompts per model/dataset:
+
+```
+python generation/generate_activations.py \
+    --dataset_name mmlu_new \
+    --model zephyr \
+    --train 1
+```
+
+- `--dataset_name`: Name of the question set to read (e.g., `mmlu_new`, `wmdp`); the script loads the corresponding `Zephyr-7b.json` question file.
+- `--model`: Model key to extract activations from. Supported keys include the original models (`zephyr`, `yi`, `llama`, `qwen`) and their unlearned counterparts (`*-rmu`, `*-npo`). Customize the model paths in the `model_args_to_name` dictionary inside the script to point to your local checkpoints.
+- `--train`: `1` to read from the train question files and write `*_greedy_train_activations.npy`, `0` to read from the eval question files and write `*_eval_activations.npy`.
+
+The output files are named `{dataset_name}_{model}_model.norm_{train|eval}_activations.npy` and are consumed directly by the activation-based classifier (see [Classification.md](./Classification.md)). Extract activations for both the original model and its unlearned counterpart (e.g., `zephyr` and `zephyr-rmu`) on each dataset (e.g., `mmlu` and `wmdp`) to form a complete original-vs-unlearned pair.
 
 ### Mixed Data Generation
 
