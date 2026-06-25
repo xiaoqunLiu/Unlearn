@@ -1,7 +1,9 @@
 /__pycache__
 /data
+/repro/models
 
 *.pyc
+*.npy
 *.log
 *.csv
 *.json
